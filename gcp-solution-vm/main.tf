@@ -37,3 +37,9 @@ module "gcr" {
 #   project     = data.google_project.this.project_id
 #   location_id = var.location
 # }
+
+resource "google_cloudbuild_trigger" "filename-trigger" {
+  name     = "test"
+  location = var.location
+  filename = "/workspaces/gcp-iac/quickstart-docker/cloudbuild.yaml"
+}
