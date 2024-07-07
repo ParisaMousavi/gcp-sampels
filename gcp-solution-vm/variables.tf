@@ -5,7 +5,7 @@ variable "prefix" {
 
 variable "name" {
   type    = string
-  default = "agnostic"
+  default = "lrn"
 }
 
 variable "environment" {
@@ -19,7 +19,7 @@ variable "environment" {
 
 variable "region_shortname" {
   type    = string
-  default = "euc1"
+  default = "euw3"
 }
 
 variable "gcp_project" {

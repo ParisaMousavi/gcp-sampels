@@ -7,7 +7,7 @@ terraform {
   }
   backend "gcs" {
     bucket = "terraform-saas-agnostic"
-    prefix = "localtest/test"
+    prefix = "localtest/gcp-solution-vm"
   }
 }
 
