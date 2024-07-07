@@ -17,6 +17,20 @@ module "vpc" {
   subnets                 = local.subnets
 }
 
+module "gcr" {
+  source         = "github.com/ParisaMousavi/gcp-gcr?ref=main"
+  name           = module.name.gcr
+  location       = var.location
+  format         = "DOCKER"
+  immutable_tags = true
+  additional_labels = {
+    "prefix"           = var.prefix,
+    "name"             = var.name,
+    "environment"      = var.environment,
+    "region_shortname" = var.region_shortname
+  }
+}
+
 # Each GCP project can only have one App Engine. If it's already enabled this line is not required.
 #--------------------------------------------------
 # resource "google_app_engine_application" "this" {
