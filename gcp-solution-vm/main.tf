@@ -38,8 +38,18 @@ module "gcr" {
 #   location_id = var.location
 # }
 
-resource "google_cloudbuild_trigger" "filename-trigger" {
-  name     = "test"
-  location = var.location
-  filename = "/workspaces/gcp-iac/quickstart-docker/cloudbuild.yaml"
+resource "google_service_account" "cloudbuild_service_account" {
+  account_id = "cloud-sa"
 }
+
+resource "google_project_iam_member" "act_as" {
+  project = data.google_project.this.project_id
+  role    = "roles/iam.serviceAccountUser"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+# resource "google_cloudbuild_trigger" "filename-trigger" {
+#   name     = "test"
+#   location = var.location
+#   filename = "/workspaces/gcp-iac/quickstart-docker/cloudbuild.yaml"
+# }
