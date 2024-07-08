@@ -39,15 +39,40 @@ module "gcr" {
 # }
 
 resource "google_service_account" "cloudbuild_service_account" {
-  account_id = "cloud-sa"
+  account_id = "cloud-sa" # "cloud-sa@dummy-parisa-2023.iam.gserviceaccount.com"
 }
 
+output "email" {
+  value = google_service_account.cloudbuild_service_account.email
+}
+
+
+#----------------------------------------------------------------------------------
+# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+#         --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
+#         --role="roles/iam.serviceAccountUser"
+#----------------------------------------------------------------------------------
 resource "google_project_iam_member" "act_as" {
   project = data.google_project.this.project_id
   role    = "roles/iam.serviceAccountUser"
   member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
 }
 
+
+# Cloud Build will need rights to access the on-demand scanning api.
+#----------------------------------------------------------------------------------
+# gcloud projects add-iam-policy-binding ${PROJECT_ID} \
+#         --member="serviceAccount:${PROJECT_NUMBER}@cloudbuild.gserviceaccount.com" \
+#         --role="roles/ondemandscanning.admin"
+#----------------------------------------------------------------------------------
+resource "google_project_iam_member" "ondemandscanning" {
+  project = data.google_project.this.project_id
+  role    = "roles/ondemandscanning.admin"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+# gcloud builds submit
+#----------------------------------------------------------------------------------
 # resource "google_cloudbuild_trigger" "filename-trigger" {
 #   name     = "test"
 #   location = var.location
