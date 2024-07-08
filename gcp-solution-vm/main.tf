@@ -71,10 +71,95 @@ resource "google_project_iam_member" "ondemandscanning" {
   member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
 }
 
-# gcloud builds submit
-#----------------------------------------------------------------------------------
-# resource "google_cloudbuild_trigger" "filename-trigger" {
+resource "google_project_iam_member" "logs_writer" {
+  project = data.google_project.this.project_id
+  role    = "roles/logging.logWriter"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+
+# roles/storage.admin
+resource "google_project_iam_member" "storage_admin" {
+  project = data.google_project.this.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.cloudbuild_service_account.email}"
+}
+
+resource "google_secret_manager_secret" "github-token-secret" {
+  secret_id = "github-token-secret"
+  replication {
+    auto {}
+  }
+}
+
+resource "google_secret_manager_secret_version" "github-token-secret-version" {
+  secret      = google_secret_manager_secret.github-token-secret.id
+  secret_data = file("pat.txt")
+}
+
+data "google_iam_policy" "p4sa-secretAccessor" {
+  binding {
+    role = "roles/secretmanager.secretAccessor"
+    // Here, 123456789 is the Google Cloud project number for the project that contains the connection.
+    members = ["serviceAccount:service-${data.google_project.this.number}@gcp-sa-cloudbuild.iam.gserviceaccount.com"]
+  }
+}
+
+resource "google_secret_manager_secret_iam_policy" "policy" {
+  secret_id   = google_secret_manager_secret.github-token-secret.secret_id
+  policy_data = data.google_iam_policy.p4sa-secretAccessor.policy_data
+}
+
+# Source: https://cloud.google.com/build/docs/automating-builds/github/connect-repo-github#gcloud
+resource "google_cloudbuildv2_connection" "my-connection" {
+  depends_on = [
+    google_secret_manager_secret_iam_policy.policy
+  ]
+  location = var.location
+  name     = module.name.cbv2con
+  github_config {
+    app_installation_id = 52576984
+    authorizer_credential {
+      oauth_token_secret_version = google_secret_manager_secret_version.github-token-secret-version.id
+    }
+  }
+}
+
+resource "google_cloudbuildv2_repository" "my-repository" {
+  location = var.location
+  name = "my-repo"
+  parent_connection = google_cloudbuildv2_connection.my-connection.name
+  remote_uri = "https://github.com/ParisaMousavi/gcp-sampels.git" 
+}
+
+# # gcloud builds submit
+# #----------------------------------------------------------------------------------
+# resource "google_cloudbuild_trigger" "github" {
+#   depends_on = [
+#     google_project_iam_member.act_as,
+#     google_project_iam_member.logs_writer
+#   ]
 #   name     = "test"
 #   location = var.location
-#   filename = "/workspaces/gcp-iac/quickstart-docker/cloudbuild.yaml"
+#   trigger_template {
+#     branch_name = "main"
+#     repo_name   = google_cloudbuildv2_repository.my-repository.name
+#   }
+#   filename        = "sample2/cloudbuild.yaml"
+#   service_account = google_service_account.cloudbuild_service_account.id
 # }
+
+resource "google_cloudbuild_trigger" "demo-trigger" {
+  location = var.location
+  name = "fjdfdksfgk"
+  repository_event_config {
+    repository = google_cloudbuildv2_repository.my-repository.id
+    push {
+      branch = "main"
+    }
+  }
+  filename = "quickstart-docker/cloudbuild.yaml"
+  service_account = google_service_account.cloudbuild_service_account.id
+}
+
+
