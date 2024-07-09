@@ -2,8 +2,8 @@ steps:
 # Build container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA', '.']
-  automapSubstitutions: true
 options:
+  automapSubstitutions: true
   logging: CLOUD_LOGGING_ONLY
 # Push image to artifact registry
 - name: 'gcr.io/cloud-builders/docker'
