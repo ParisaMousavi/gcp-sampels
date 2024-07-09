@@ -1,10 +1,9 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/dummy-parisa-2023/poc-gcr-lrn-dev-euw3/quicksample:v1', '.']
+  script: |
+    docker build -t europe-west3-docker.pkg.dev/dummy-parisa-2023/poc-gcr-lrn-dev-euw3/quickstart-image:tag1 .
   automapSubstitutions: true
 options:
   logging: CLOUD_LOGGING_ONLY
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'europe-west1-docker.pkg.dev/dummy-parisa-2023/poc-gcr-lrn-dev-euw3/quicksample:v1']
-  automapSubstitutions: true
-
+images:
+- 'europe-west3-docker.pkg.dev/dummy-parisa-2023/poc-gcr-lrn-dev-euw3/quickstart-image:tag1'
