@@ -19,7 +19,7 @@ variable "environment" {
 
 variable "region_shortname" {
   type    = string
-  default = "euw3"
+  default = "euw1"
 }
 
 variable "gcp_project" {
@@ -29,5 +29,5 @@ variable "gcp_project" {
 
 variable "location" {
   type    = string
-  default = "europe-west3"
+  default = "europe-west1"
 }
