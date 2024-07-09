@@ -1,8 +1,9 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA']
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA', '.']
 automapSubstitutions: true
 options:
   logging: CLOUD_LOGGING_ONLY
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/${PROJECT_ID}/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA']
+
