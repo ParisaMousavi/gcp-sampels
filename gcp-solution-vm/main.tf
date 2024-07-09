@@ -126,10 +126,10 @@ resource "google_cloudbuildv2_connection" "my-connection" {
 }
 
 resource "google_cloudbuildv2_repository" "my-repository" {
-  location = var.location
-  name = "my-repo"
+  location          = var.location
+  name              = "my-repo"
   parent_connection = google_cloudbuildv2_connection.my-connection.name
-  remote_uri = "https://github.com/ParisaMousavi/gcp-sampels.git" 
+  remote_uri        = "https://github.com/ParisaMousavi/gcp-sampels.git"
 }
 
 # # gcloud builds submit
@@ -151,14 +151,14 @@ resource "google_cloudbuildv2_repository" "my-repository" {
 
 resource "google_cloudbuild_trigger" "demo-trigger" {
   location = var.location
-  name = "fjdfdksfgk"
+  name     = module.name.trig
   repository_event_config {
     repository = google_cloudbuildv2_repository.my-repository.id
     push {
       branch = "main"
     }
   }
-  filename = "quickstart-docker/cloudbuild.yaml"
+  filename        = "quickstart-docker/cloudbuild.yaml"
   service_account = google_service_account.cloudbuild_service_account.id
 }
 
