@@ -1,9 +1,10 @@
 steps:
+# Build container image
 - name: 'gcr.io/cloud-builders/docker'
-  script: |
-    docker build -t europe-west1-docker.pkg.dev/dummy-parisa-2023/poc-gcr-lrn-dev-euw3/quickstart-image:tag1 .
+  args: ['build', '-t', 'europe-west1-docker.pkg.dev/$PROJECT_ID/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA', '.']
   automapSubstitutions: true
-options:
-  logging: CLOUD_LOGGING_ONLY
-images:
-- 'europe-west1-docker.pkg.dev/dummy-parisa-2023/poc-gcr-lrn-dev-euw3/quickstart-image:tag1'
+  options:
+    logging: CLOUD_LOGGING_ONLY
+# Push image to artifact registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'europe-west1-docker.pkg.dev/$PROJECT_ID/poc-gcr-lrn-dev-euw3/$_SERVICE_NAME:$COMMIT_SHA']

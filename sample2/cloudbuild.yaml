@@ -3,7 +3,7 @@ steps:
 # build
 - id: "build"
   name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'us-central1-docker.pkg.dev//artifact-scanning-repo/sample-image', '.']
+  args: ['build', '-t', 'us-central1-docker.pkg.dev/artifact-scanning-repo/sample-image', '.']
   waitFor: ['-']
 
 

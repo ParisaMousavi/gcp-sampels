@@ -160,6 +160,9 @@ resource "google_cloudbuild_trigger" "demo-trigger" {
   }
   filename        = "quickstart-docker/cloudbuild.yaml"
   service_account = google_service_account.cloudbuild_service_account.id
+  substitutions = {
+    "_SERVICE_NAME" = "quickstart"
+  }
 }
 
 
